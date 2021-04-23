@@ -17,3 +17,7 @@ java.sql.SQLIntegrityConstraintViolationException'
 
 From <https://help.mulesoft.com/s/question/0D52T00004mXUPX/how-to-capture-database-unique-constraint-error-in-error-handling-catch-exception-strategy> 
 
+
+
+keytool -importcert -alias startssl -keystore  C:/Users/bishwdas/Downloads/AnypointStudio/plugins/org.mule.tooling.jdk.win32.x86_64_1.0.1/jre/lib/security/cacerts -storepass changeit -file mavenExchange.cer
+
