@@ -27,3 +27,6 @@ From <https://www.baeldung.com/swagger-2-documentation-for-spring-rest-api>
 
 
 java -jar caf.swagger-0.0.1-SNAPSHOT.jar --spring.profiles.active=DEV --keep.calm=checkkk
+
+
+mvn spring-boot:run -Dspring-boot.run.profiles=DEV -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true
