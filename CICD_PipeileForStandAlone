@@ -1,0 +1,70 @@
+pipeline {
+    agent { label 'servername' } 
+
+	parameters {
+	    string(name: 'USERNAME', defaultValue: '', description: 'This Username will be used to ssh the Prod enviroment (To be filled when Prod enviroment is selected, can be empty when other enviroments are selected)')
+		choice(choices: 'DEV\nQA\nUAT\nPROD', description: 'Higher environment to deploy to.', name: 'ENVIRONMENT')
+
+    }
+    environment {
+	
+		DATE_TIME = VersionNumber projectStartDate: '', versionNumberString: '${BUILD_DATE_FORMATTED}', versionPrefix: '', worstResultForIncrement: 'SUCCESS'
+		COLLIBRA_CONNECTOR_JAR_PATH = "dgc-connector-2.0.3-mule-plugin.jar"
+        COLLIBRA_CONNECTOR_POM_PATH = "connector-pom-file.xml"
+		
+	}
+    stages {
+        stage('Build') {
+            steps {
+                echo '*************************Build Started*************************************'
+                sh 'mvn -version'
+              	sh 'mvn clean'
+                sh "mvn clean install"
+				sh "mvn install:install-file -Dfile=${COLLIBRA_CONNECTOR_JAR_PATH} -DgroupId=com.collibra.connect -DartifactId=dgc-connector -Dversion=2.0.3 -Dclassifier=mule-plugin -Dpackaging=jar -DpomFile=${COLLIBRA_CONNECTOR_POM_PATH}"
+            }
+        }
+        
+        stage('Deploy'){
+        steps {  
+        script{
+        	
+           		echo '***********************Starting Deployement********************************' 
+				echo """
+						----- DEPLOY PARAMETERS -----
+						Build URL: ${BUILD_URL}
+						Deploy Time: ${DATE_TIME}
+						Environment Deployed To: ${ENVIRONMENT}
+						"""
+                
+                switch(ENVIRONMENT) {
+                
+                              
+                 		case "DEV":   
+                              echo "Deploy to DEV selected."
+                              sh 'sftp $(echo $(git --no-pager show -s --format="%ae") | cut -d"@" -f1)@servername:/opt/muleESB/mule-enterprise-standalone-4.2.0/apps/ <<< $"put /Data/jenkins/workspace/BPG/dbt/rdc/cdo/metadata/EDWMetadataManagement/target"'
+                      	 break
+                        case "QA":
+                         
+                            echo "Deploy to QA selected."
+                             
+                            sh 'sftp $(echo $(git --no-pager show -s --format="%ae") | cut -d"@" -f1)@servername:/opt/muleESB/mule-enterprise-standalone-4.2.0/apps/ <<< $"put /Data/jenkins/workspace/BPG/dbt/rdc/cdo/metadata/EDWMetadataManagement/target"'
+                      	 break
+                        
+                        case "UAT":
+                         
+                            sh 'sftp $(echo $(git --no-pager show -s --format="%ae") | cut -d"@" -f1)@servername:/opt/muleESB/mule-enterprise-standalone-4.2.0/apps/ <<< $"put /Data/jenkins/workspace/BPG/dbt/rdc/cdo/metadata/EDWMetadataManagement/target"'
+                      	 break
+                        
+                        case "PROD":
+                         
+                            sh 'sftp $(echo $(git --no-pager show -s --format="%ae") | cut -d"@" -f1)@servername:/opt/muleESB/mule-enterprise-standalone-4.2.0/apps/ <<< $"put /Data/jenkins/workspace/BPG/dbt/rdc/cdo/metadata/EDWMetadataManagement/target"'
+                      	 break
+                       
+                      
+                
+               }
+           }
+    }
+}
+}
+}
