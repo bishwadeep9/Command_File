@@ -1,0 +1,19 @@
+# Copy the certificate into the directory Java_home\Jre\Lib\Security
+# Change your directory to Java_home\Jre\Lib\Security>
+# Import the certificate to a trust store.
+# Here's the import command:
+keytool -import -alias ca -file somecert.cer -keystore cacerts -storepass changeit [Return]
+Trust this certificate: [Yes]
+
+From <https://stackoverflow.com/questions/30199806/java-https-connection-with-ssl-certificate-error/30199870> 
+
+INSERT INTO mytable (id1, t1) 
+  SELECT 11, 'x1' FROM DUAL 
+  WHERE NOT EXISTS (SELECT id1 FROM mytble WHERE id1 = 11)
+
+From <https://stackoverflow.com/questions/237327/oracle-how-to-upsert-update-or-insert-into-a-table> 
+
+java.sql.SQLIntegrityConstraintViolationException'
+
+From <https://help.mulesoft.com/s/question/0D52T00004mXUPX/how-to-capture-database-unique-constraint-error-in-error-handling-catch-exception-strategy> 
+
