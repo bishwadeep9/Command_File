@@ -1,0 +1,2 @@
+@GetMapping(value="/getrequestorinfo/{useremail:.+}")
+	public String fetchdata(@PathVariable("useremail") String useremail) 
