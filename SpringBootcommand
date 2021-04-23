@@ -1,0 +1,29 @@
+java -jar caf.swagger-0.0.1-SNAPSHOT.jar
+
+http://localhost:8081/swagger-ui.html?baseUrl=#/caf-controller
+
+http://localhost:8081/swagger-ui.html?
+
+Command
+
+mvn spring-boot:run -Dspring-boot.run.profiles=DEV
+
+MAVEN BUILD 
+mvn clean install -PDEV
+This command will select dev  profile for maven build
+
+After this command you have to run below Java command with same profile select DEV , if not then it will fail because only dev profile ins present in classpath while maven build
+
+JAVA RUN
+
+java -jar caf.swagger-0.0.1-SNAPSHOT.jar --spring.profiles.active=DEV
+
+
+java -jar caf.swagger-0.0.1-SNAPSHOT.jar --spring.profiles.active=DEV --Dspring.config.location=C:Users/bishwadeepdas/Downloads/Collib/config/application-prod.properties
+
+.apis(RequestHandlerSelectors.any()) .paths(PathSelectors.any()) .build();
+
+From <https://www.baeldung.com/swagger-2-documentation-for-spring-rest-api> 
+
+
+java -jar caf.swagger-0.0.1-SNAPSHOT.jar --spring.profiles.active=DEV --keep.calm=checkkk
