@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+
+    <!--These are some of the loggers you can enable. 
+        There are several more you can find in the documentation. 
+        Besides this log4j configuration, you can also use Java VM environment variables
+        to enable other logs like network (-Djavax.net.debug=ssl or all) and 
+        Garbage Collector (-XX:+PrintGC). These will be append to the console, so you will 
+        see them in the mule_ee.log file. -->
+
+		<Properties>
+
+		    <Property name="server_name">"XXX"</Property>
+			<Property name="platform">java</Property>
+			<Property name="dist">${sys:app.name}</Property>
+			<Property name="release">1.0.0</Property>
+			<Property name="environment">DEV</Property>
+			<Property name="level">info</Property>
+			<Property name="type">debug</Property>
+			<Property name="dateT">%d{yyyy-MM-dd}T%d{HH:mm:ss}</Property>
+			<Property name="l_correlationId">%X{correlationId}</Property>
+			<Property name="l_correlationId_3">"%equals{%u{"TIME"}}{-}{}"</Property> 
+      <Property name="l_correlationId_4">"%equals{%u{"TIME"}}{-}{}"</Property>
+			
+		</Properties>
+
+
+    <Appenders>
+        
+        <RollingFile name="file" fileName="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}sentry-poc.log" 
+                 filePattern="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}sentry-poc-%i.log">
+            <PatternLayout pattern="%-5p %d [%t] [event: %X{correlationId}] %c: %m%n" />
+            <SizeBasedTriggeringPolicy size="10 MB" />
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        
+		<Console name="ConsoleJSONAppender" target="SYSTEM_OUT">
+        	<JsonLayout complete="false" compact="true" locationInfo="true" eventEol="true" properties="true" propertiesAsList="true" objectMessageAsJsonObject="true">
+            	<KeyValuePair key="event_id" value="${l_correlationId}"/>
+            	<KeyValuePair key="timestamp" value="${dateT}" />
+            	<KeyValuePair key="server_name" value="myCustomValue" />
+            	<KeyValuePair key="platform" value="${platform}" />
+            	<KeyValuePair key="dist" value="${dist}" />
+            	<KeyValuePair key="release" value="${release}" />
+            	<KeyValuePair key="environment" value="${environment}" />
+            	<KeyValuePair key="type" value="${type}" />
+        	</JsonLayout>
+    	</Console>
+    	
+    	<Console name="ConsoleJSONAppender_1" target="SYSTEM_OUT">
+        	
+        	<PatternLayout pattern="{ 'event_id' :  ${l_correlationId_3} ,'timestamp': ${dateT} ,
+        	'server_name':'my remote address' , 'platform': ${platform} , 'dist':${dist},
+        	'release': ${release} , 'environment': ${environment} , 'level': ${level} , 'type': ${type} ,
+        	'message': '{' %m '}'  } %n"/>
+        	
+        </Console>
+        	 
+    </Appenders>
+    
+    <Loggers>
+        
+        <!-- Http Logger shows wire traffic on DEBUG. -->
+        <!--AsyncLogger name="org.mule.service.http.impl.service.HttpMessageLogger" level="DEBUG" /-->
+        <AsyncLogger name="org.mule.service.http" level="WARN"/>
+        <AsyncLogger name="org.mule.extension.http" level="WARN"/>
+    
+		<!-- Mule logger -->        
+        <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="INFO"/>
+ 
+        <AsyncRoot level="INFO">
+            <AppenderRef ref="file" />
+        </AsyncRoot>
+       
+         
+        <AsyncLogger name="com.sentry.log" level="INFO">
+        	<AppenderRef ref="ConsoleJSONAppender_1" />
+    	</AsyncLogger>
+    	
+    </Loggers>
+</Configuration>
